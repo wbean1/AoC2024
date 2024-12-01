@@ -35,7 +35,12 @@ pub fn part_two(input: &str) -> Option<u32> {
     let (array_one, array_two) = parse_and_sort(input);
     let sum = array_one
         .iter()
-        .flat_map(|val| array_two.iter().take_while(|&&x| x <= *val).filter(|&&x| x == *val))
+        .flat_map(|val| {
+            array_two
+                .iter()
+                .take_while(|&&x| x <= *val)
+                .filter(|&&x| x == *val)
+        })
         .sum();
     Some(sum)
 }
