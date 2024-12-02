@@ -1,34 +1,34 @@
 advent_of_code::solution!(2);
 
-fn is_safe(line: Vec<u32>) -> bool {
-    if all_increasing(line.clone()) || all_decreasing(line.clone()) {
-        if diff_at_most_three(line.clone()) {
+fn is_safe(line: &[u32]) -> bool {
+    if all_increasing(line) || all_decreasing(line) {
+        if diff_at_most_three(line) {
             return true;
         }
     }
     false
 }
 
-fn is_safe_with_dampener(line: Vec<u32>) -> bool {
+fn is_safe_with_dampener(line: &[u32]) -> bool {
     for i in 0..line.len() {
-        let mut new_line = line.clone();
+        let mut new_line = line.to_vec();
         new_line.remove(i);
-        if is_safe(new_line) {
+        if is_safe(&new_line) {
             return true;
         }
     }
     false
 }
 
-fn all_increasing(line: Vec<u32>) -> bool {
+fn all_increasing(line: &[u32]) -> bool {
     line.windows(2).all(|w| w[0] < w[1])
 }
 
-fn all_decreasing(line: Vec<u32>) -> bool {
+fn all_decreasing(line: &[u32]) -> bool {
     line.windows(2).all(|w| w[0] > w[1])
 }
 
-fn diff_at_most_three(line: Vec<u32>) -> bool {
+fn diff_at_most_three(line: &[u32]) -> bool {
     line.windows(2).all(|w| (w[1].max(w[0]) - w[1].min(w[0])) <= 3)
 }
 
@@ -46,8 +46,8 @@ fn parse_input(input: &str) -> Vec<Vec<u32>> {
 pub fn part_one(input: &str) -> Option<u32> {
     let nums = parse_input(input);
     let mut count = 0;
-    for line in nums {
-        if is_safe(line.clone()) {
+    for line in &nums {
+        if is_safe(line) {
             count += 1;
         }
     }
@@ -57,8 +57,8 @@ pub fn part_one(input: &str) -> Option<u32> {
 pub fn part_two(input: &str) -> Option<u32> {
     let nums = parse_input(input);
     let mut count = 0;
-    for line in nums {
-        if is_safe_with_dampener(line.clone()) {
+    for line in &nums {
+        if is_safe_with_dampener(line) {
             count += 1;
         }
     }
@@ -90,22 +90,22 @@ mod tests {
 
     #[test]
     fn test_all_increasing() {
-        assert!(all_increasing(vec![1, 2, 3, 4]));
-        assert!(!all_increasing(vec![1, 3, 2, 4]));
-        assert!(!all_increasing(vec![4, 3, 2, 1]));
+        assert!(all_increasing(&vec![1, 2, 3, 4]));
+        assert!(!all_increasing(&vec![1, 3, 2, 4]));
+        assert!(!all_increasing(&vec![4, 3, 2, 1]));
     }
 
     #[test]
     fn test_all_decreasing() {
-        assert!(all_decreasing(vec![4, 3, 2, 1]));
-        assert!(!all_decreasing(vec![4, 2, 3, 1]));
-        assert!(!all_decreasing(vec![1, 2, 3, 4]));
+        assert!(all_decreasing(&vec![4, 3, 2, 1]));
+        assert!(!all_decreasing(&vec![4, 2, 3, 1]));
+        assert!(!all_decreasing(&vec![1, 2, 3, 4]));
     }
 
     #[test]
     fn test_diff_at_most_three() {
-        assert!(diff_at_most_three(vec![1, 2, 4, 6]));
-        assert!(diff_at_most_three(vec![6, 4, 2, 1]));
-        assert!(!diff_at_most_three(vec![1, 5, 2, 6]));
+        assert!(diff_at_most_three(&vec![1, 2, 4, 6]));
+        assert!(diff_at_most_three(&vec![6, 4, 2, 1]));
+        assert!(!diff_at_most_three(&vec![1, 5, 2, 6]));
     }
 }
