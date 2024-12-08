@@ -29,13 +29,17 @@ pub fn part_two(input: &str) -> Option<u32> {
 
 fn parse_input(input: &str) -> (Vec<(u32, u32)>, Vec<Vec<u32>>) {
     let (rules, pages) = input.split_once("\n\n").unwrap();
-    let rules: Vec<(u32, u32)> = rules.lines()
+    let rules: Vec<(u32, u32)> = rules
+        .lines()
         .map(|line| {
             let mut parts = line.split('|').map(|s| s.parse().unwrap());
             (parts.next().unwrap(), parts.next().unwrap())
         })
         .collect();
-    let page_list: Vec<Vec<u32>> = pages.lines().map(|line| line.split(',').map(|s| s.parse().unwrap()).collect()).collect();
+    let page_list: Vec<Vec<u32>> = pages
+        .lines()
+        .map(|line| line.split(',').map(|s| s.parse().unwrap()).collect())
+        .collect();
     (rules, page_list)
 }
 

@@ -23,7 +23,11 @@ fn turn_right(direction: char) -> char {
 }
 
 pub fn part_one(input: &str) -> Option<u32> {
-    let map: Vec<Vec<char>> = input.trim().lines().map(|line| line.chars().collect()).collect();
+    let map: Vec<Vec<char>> = input
+        .trim()
+        .lines()
+        .map(|line| line.chars().collect())
+        .collect();
     let mut visited = HashSet::new();
     let mut is_on_map = true;
     let mut current_position = get_start_position(&map);
@@ -42,7 +46,11 @@ pub fn part_one(input: &str) -> Option<u32> {
             _ => panic!("unsafe direction"),
         }
 
-        if new_position.1 < 0 || new_position.1 >= map.len() as i32 || new_position.0 < 0 || new_position.0 >= map[0].len() as i32 {
+        if new_position.1 < 0
+            || new_position.1 >= map.len() as i32
+            || new_position.0 < 0
+            || new_position.0 >= map[0].len() as i32
+        {
             is_on_map = false;
         } else {
             if map[new_position.1 as usize][new_position.0 as usize] == '#' {
@@ -54,11 +62,14 @@ pub fn part_one(input: &str) -> Option<u32> {
     }
 
     Some(visited.len() as u32)
-
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    let map: Vec<Vec<char>> = input.trim().lines().map(|line| line.chars().collect()).collect();
+    let map: Vec<Vec<char>> = input
+        .trim()
+        .lines()
+        .map(|line| line.chars().collect())
+        .collect();
     let mut visited = HashSet::new();
     let mut is_on_map = true;
     let mut current_position = get_start_position(&map);
@@ -80,7 +91,11 @@ pub fn part_two(input: &str) -> Option<u32> {
             _ => panic!("unsafe direction"),
         }
 
-        if new_position.1 < 0 || new_position.1 >= map.len() as i32 || new_position.0 < 0 || new_position.0 >= map[0].len() as i32 {
+        if new_position.1 < 0
+            || new_position.1 >= map.len() as i32
+            || new_position.0 < 0
+            || new_position.0 >= map[0].len() as i32
+        {
             is_on_map = false;
         } else {
             if map[new_position.1 as usize][new_position.0 as usize] == '#' {
@@ -124,8 +139,11 @@ fn forms_loop_when_blocked(map: &Vec<Vec<char>>, blocked_pos: (usize, usize)) ->
         }
 
         // Check if we're going off the map
-        if new_position.1 < 0 || new_position.1 >= map.len() as i32 ||
-           new_position.0 < 0 || new_position.0 >= map[0].len() as i32 {
+        if new_position.1 < 0
+            || new_position.1 >= map.len() as i32
+            || new_position.0 < 0
+            || new_position.0 >= map[0].len() as i32
+        {
             return false; // Path goes off map, no loop formed
         }
 
