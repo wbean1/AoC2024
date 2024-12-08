@@ -1,6 +1,6 @@
 advent_of_code::solution!(4);
 
-fn is_xmas_going_up(i: usize, j: usize, chars: &Vec<Vec<char>>) -> bool {
+fn is_xmas_going_up(i: usize, j: usize, chars: &[Vec<char>]) -> bool {
     if i < 3 {
         return false;
     }
@@ -12,13 +12,13 @@ fn is_xmas_going_down(i: usize, j: usize, chars: &Vec<Vec<char>>) -> bool {
     }
     chars[i][j] == 'X' && chars[i + 1][j] == 'M' && chars[i + 2][j] == 'A' && chars[i + 3][j] == 'S'
 }
-fn is_xmas_going_right(i: usize, j: usize, chars: &Vec<Vec<char>>) -> bool {
+fn is_xmas_going_right(i: usize, j: usize, chars: &[Vec<char>]) -> bool {
     if j > chars[i].len() - 4 {
         return false;
     }
     chars[i][j] == 'X' && chars[i][j + 1] == 'M' && chars[i][j + 2] == 'A' && chars[i][j + 3] == 'S'
 }
-fn is_xmas_going_left(i: usize, j: usize, chars: &Vec<Vec<char>>) -> bool {
+fn is_xmas_going_left(i: usize, j: usize, chars: &[Vec<char>]) -> bool {
     if j < 3 {
         return false;
     }
@@ -42,7 +42,7 @@ fn is_xmas_going_diagonal_down_left(i: usize, j: usize, chars: &Vec<Vec<char>>) 
         && chars[i + 2][j - 2] == 'A'
         && chars[i + 3][j - 3] == 'S'
 }
-fn is_xmas_going_diagonal_up_right(i: usize, j: usize, chars: &Vec<Vec<char>>) -> bool {
+fn is_xmas_going_diagonal_up_right(i: usize, j: usize, chars: &[Vec<char>]) -> bool {
     if i < 3 || j > chars[i].len() - 4 {
         return false;
     }
@@ -51,7 +51,7 @@ fn is_xmas_going_diagonal_up_right(i: usize, j: usize, chars: &Vec<Vec<char>>) -
         && chars[i - 2][j + 2] == 'A'
         && chars[i - 3][j + 3] == 'S'
 }
-fn is_xmas_going_diagonal_up_left(i: usize, j: usize, chars: &Vec<Vec<char>>) -> bool {
+fn is_xmas_going_diagonal_up_left(i: usize, j: usize, chars: &[Vec<char>]) -> bool {
     if i < 3 || j < 3 {
         return false;
     }

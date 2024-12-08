@@ -47,7 +47,7 @@ fn middle_page(pages: &Vec<u32>) -> u32 {
     pages[pages.len() / 2]
 }
 
-fn is_page_order_valid(pages: &Vec<u32>, rules: &Vec<(u32, u32)>) -> bool {
+fn is_page_order_valid(pages: &[u32], rules: &Vec<(u32, u32)>) -> bool {
     for rule in rules {
         if pages.contains(&rule.0) && pages.contains(&rule.1) {
             let position_of_first = pages.iter().position(|&p| p == rule.0).unwrap();
@@ -60,10 +60,10 @@ fn is_page_order_valid(pages: &Vec<u32>, rules: &Vec<(u32, u32)>) -> bool {
     true
 }
 
-fn reorder_pages(pages: &Vec<u32>, rules: &Vec<(u32, u32)>) -> Vec<u32> {
-    let mut new_pages = pages.clone();
+fn reorder_pages(pages: &[u32], rules: &Vec<(u32, u32)>) -> Vec<u32> {
+    let mut new_pages = pages.to_owned();
 
-    while !is_page_order_valid(&new_pages, &rules) {
+    while !is_page_order_valid(&new_pages, rules) {
         for rule in rules {
             if new_pages.contains(&rule.0) && new_pages.contains(&rule.1) {
                 let position_of_first = new_pages.iter().position(|&p| p == rule.0).unwrap();

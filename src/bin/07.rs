@@ -24,7 +24,8 @@ pub fn part_one(input: &str) -> Option<u64> {
         while let Some(unsolved_eq) = eqs.pop() {
             let possible_answer_1 = unsolved_eq[0] + unsolved_eq[1];
             let possible_answer_2 = unsolved_eq[0] * unsolved_eq[1];
-            if unsolved_eq.len() == 2 { // len 2 means these are our only possible answers for this eq
+            if unsolved_eq.len() == 2 {
+                // len 2 means these are our only possible answers for this eq
                 if possible_answer_1 == answer || possible_answer_2 == answer {
                     sum += answer;
                     break;

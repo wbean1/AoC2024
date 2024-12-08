@@ -1,7 +1,7 @@
 advent_of_code::solution!(6);
 use std::collections::HashSet;
 
-fn get_start_position(map: &Vec<Vec<char>>) -> (usize, usize) {
+fn get_start_position(map: &[Vec<char>]) -> (usize, usize) {
     for (y, row) in map.iter().enumerate() {
         for (x, &cell) in row.iter().enumerate() {
             if cell == '^' {
@@ -52,12 +52,10 @@ pub fn part_one(input: &str) -> Option<u32> {
             || new_position.0 >= map[0].len() as i32
         {
             is_on_map = false;
+        } else if map[new_position.1 as usize][new_position.0 as usize] == '#' {
+            direction = turn_right(direction);
         } else {
-            if map[new_position.1 as usize][new_position.0 as usize] == '#' {
-                direction = turn_right(direction);
-            } else {
-                current_position = (new_position.0 as usize, new_position.1 as usize);
-            }
+            current_position = (new_position.0 as usize, new_position.1 as usize);
         }
     }
 
@@ -97,12 +95,10 @@ pub fn part_two(input: &str) -> Option<u32> {
             || new_position.0 >= map[0].len() as i32
         {
             is_on_map = false;
+        } else if map[new_position.1 as usize][new_position.0 as usize] == '#' {
+            direction = turn_right(direction);
         } else {
-            if map[new_position.1 as usize][new_position.0 as usize] == '#' {
-                direction = turn_right(direction);
-            } else {
-                current_position = (new_position.0 as usize, new_position.1 as usize);
-            }
+            current_position = (new_position.0 as usize, new_position.1 as usize);
         }
     }
 
@@ -118,7 +114,7 @@ pub fn part_two(input: &str) -> Option<u32> {
 
 fn forms_loop_when_blocked(map: &Vec<Vec<char>>, blocked_pos: (usize, usize)) -> bool {
     let mut visited = HashSet::new();
-    let mut current_position = get_start_position(&map);
+    let mut current_position = get_start_position(map);
     let mut direction = 'N';
 
     loop {

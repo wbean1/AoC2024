@@ -1,10 +1,8 @@
 advent_of_code::solution!(2);
 
 fn is_safe(line: &[u32]) -> bool {
-    if all_increasing(line) || all_decreasing(line) {
-        if diff_at_most_three(line) {
-            return true;
-        }
+    if (all_increasing(line) || all_decreasing(line)) && diff_at_most_three(line) {
+        return true;
     }
     false
 }
@@ -94,22 +92,22 @@ mod tests {
 
     #[test]
     fn test_all_increasing() {
-        assert!(all_increasing(&vec![1, 2, 3, 4]));
-        assert!(!all_increasing(&vec![1, 3, 2, 4]));
-        assert!(!all_increasing(&vec![4, 3, 2, 1]));
+        assert!(all_increasing(&[1, 2, 3, 4]));
+        assert!(!all_increasing(&[1, 3, 2, 4]));
+        assert!(!all_increasing(&[4, 3, 2, 1]));
     }
 
     #[test]
     fn test_all_decreasing() {
-        assert!(all_decreasing(&vec![4, 3, 2, 1]));
-        assert!(!all_decreasing(&vec![4, 2, 3, 1]));
-        assert!(!all_decreasing(&vec![1, 2, 3, 4]));
+        assert!(all_decreasing(&[4, 3, 2, 1]));
+        assert!(!all_decreasing(&[4, 2, 3, 1]));
+        assert!(!all_decreasing(&[1, 2, 3, 4]));
     }
 
     #[test]
     fn test_diff_at_most_three() {
-        assert!(diff_at_most_three(&vec![1, 2, 4, 6]));
-        assert!(diff_at_most_three(&vec![6, 4, 2, 1]));
-        assert!(!diff_at_most_three(&vec![1, 5, 2, 6]));
+        assert!(diff_at_most_three(&[1, 2, 4, 6]));
+        assert!(diff_at_most_three(&[6, 4, 2, 1]));
+        assert!(!diff_at_most_three(&[1, 5, 2, 6]));
     }
 }
