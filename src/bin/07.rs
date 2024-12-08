@@ -17,81 +17,84 @@ fn parse_input(input: &str) -> Vec<(u64, Vec<u64>)> {
 
 pub fn part_one(input: &str) -> Option<u64> {
     let equations = parse_input(input);
-
-    let mut sum = 0;
-    for (answer, equation) in equations {
-        let mut eqs = vec![equation];
-        while let Some(unsolved_eq) = eqs.pop() {
-            let possible_answer_1 = unsolved_eq[0] + unsolved_eq[1];
-            let possible_answer_2 = unsolved_eq[0] * unsolved_eq[1];
-            if unsolved_eq.len() == 2 {
-                // len 2 means these are our only possible answers for this eq
-                if possible_answer_1 == answer || possible_answer_2 == answer {
-                    sum += answer;
-                    break;
-                } else {
-                    continue;
-                }
-            } else {
-                let mut new_eq_1 = vec![possible_answer_1];
-                new_eq_1.extend_from_slice(&unsolved_eq[2..]);
-                eqs.push(new_eq_1);
-
-                let mut new_eq_2 = vec![possible_answer_2];
-                new_eq_2.extend_from_slice(&unsolved_eq[2..]);
-                eqs.push(new_eq_2);
-            }
-        }
-    }
-
-    Some(sum)
+    Some(
+        equations
+            .into_iter()
+            .filter(|(answer, equation)| solve_equation_part1(equation, *answer))
+            .map(|(answer, _)| answer)
+            .sum(),
+    )
 }
 
 pub fn part_two(input: &str) -> Option<u64> {
     let equations = parse_input(input);
+    Some(
+        equations
+            .into_iter()
+            .filter(|(answer, equation)| solve_equation_part2(equation, *answer))
+            .map(|(answer, _)| answer)
+            .sum(),
+    )
+}
 
-    let mut sum = 0;
-    for (answer, equation) in equations {
-        let mut eqs = vec![equation];
-        while let Some(unsolved_eq) = eqs.pop() {
-            let possible_answer_1 = unsolved_eq[0] + unsolved_eq[1];
-            let possible_answer_2 = unsolved_eq[0] * unsolved_eq[1];
-            let possible_answer_3 = format!("{}{}", unsolved_eq[0], unsolved_eq[1])
-                .parse::<u64>()
-                .ok();
-            if unsolved_eq.len() == 2 {
-                if possible_answer_1 == answer
-                    || possible_answer_2 == answer
-                    || possible_answer_3.map_or(false, |p3| p3 == answer)
-                {
-                    sum += answer;
-                    break;
-                } else {
-                    continue;
-                }
-            } else {
-                if possible_answer_1 <= answer {
-                    let mut new_eq_1 = vec![possible_answer_1];
-                    new_eq_1.extend_from_slice(&unsolved_eq[2..]);
-                    eqs.push(new_eq_1);
-                }
-                if possible_answer_2 <= answer {
-                    let mut new_eq_2 = vec![possible_answer_2];
-                    new_eq_2.extend_from_slice(&unsolved_eq[2..]);
-                    eqs.push(new_eq_2);
-                }
-                if possible_answer_3.map_or(false, |p3| p3 <= answer) {
-                    if let Some(p3) = possible_answer_3 {
-                        let mut new_eq_3 = vec![p3];
-                        new_eq_3.extend_from_slice(&unsolved_eq[2..]);
-                        eqs.push(new_eq_3);
-                    }
-                }
-            }
+fn solve_equation_part1(equation: &[u64], target: u64) -> bool {
+    if equation.len() == 2 {
+        let sum = equation[0] + equation[1];
+        let product = equation[0] * equation[1];
+        return sum == target || product == target;
+    }
+
+    let sum = equation[0] + equation[1];
+    let product = equation[0] * equation[1];
+
+    let mut new_eq_1 = vec![sum];
+    new_eq_1.extend_from_slice(&equation[2..]);
+
+    let mut new_eq_2 = vec![product];
+    new_eq_2.extend_from_slice(&equation[2..]);
+
+    solve_equation_part1(&new_eq_1, target) || solve_equation_part1(&new_eq_2, target)
+}
+
+fn solve_equation_part2(equation: &[u64], target: u64) -> bool {
+    if equation.len() == 2 {
+        let sum = equation[0] + equation[1];
+        let product = equation[0] * equation[1];
+        let concat = format!("{}{}", equation[0], equation[1])
+            .parse::<u64>()
+            .ok();
+        return sum == target || product == target || concat.map_or(false, |c| c == target);
+    }
+
+    let sum = equation[0] + equation[1];
+    let product = equation[0] * equation[1];
+    let concat = format!("{}{}", equation[0], equation[1])
+        .parse::<u64>()
+        .ok();
+
+    let mut results = false;
+
+    if sum <= target {
+        let mut new_eq = vec![sum];
+        new_eq.extend_from_slice(&equation[2..]);
+        results |= solve_equation_part2(&new_eq, target);
+    }
+
+    if product <= target {
+        let mut new_eq = vec![product];
+        new_eq.extend_from_slice(&equation[2..]);
+        results |= solve_equation_part2(&new_eq, target);
+    }
+
+    if let Some(c) = concat {
+        if c <= target {
+            let mut new_eq = vec![c];
+            new_eq.extend_from_slice(&equation[2..]);
+            results |= solve_equation_part2(&new_eq, target);
         }
     }
 
-    Some(sum)
+    results
 }
 
 #[cfg(test)]
