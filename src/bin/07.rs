@@ -80,14 +80,14 @@ fn solve_equation_part2(equation: &[u64], target: u64) -> bool {
         results |= solve_equation_part2(&new_eq, target);
     }
 
-    if product <= target {
+    if product <= target && !results {
         let mut new_eq = vec![product];
         new_eq.extend_from_slice(&equation[2..]);
         results |= solve_equation_part2(&new_eq, target);
     }
 
     if let Some(c) = concat {
-        if c <= target {
+        if c <= target && !results {
             let mut new_eq = vec![c];
             new_eq.extend_from_slice(&equation[2..]);
             results |= solve_equation_part2(&new_eq, target);
