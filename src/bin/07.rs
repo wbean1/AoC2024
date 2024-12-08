@@ -1,14 +1,5 @@
 advent_of_code::solution!(7);
 
-fn has_unsolved_wip(wips: &[Vec<u64>]) -> bool {
-    wips.iter().any(|wip| wip.len() > 1)
-}
-
-fn get_and_remove_first_unsolved_wip(wips: &mut Vec<Vec<u64>>) -> Vec<u64> {
-    let pos = wips.iter().position(|wip| wip.len() > 1).unwrap();
-    wips.remove(pos)
-}
-
 fn parse_input(input: &str) -> Vec<(u64, Vec<u64>)> {
     input
         .lines()
@@ -28,25 +19,26 @@ pub fn part_one(input: &str) -> Option<u64> {
     let equations = parse_input(input);
 
     let mut sum = 0;
-    for equation in equations {
-        let mut wips = vec![equation.1];
-        while has_unsolved_wip(&wips) {
-            let unsolved_wip = get_and_remove_first_unsolved_wip(&mut wips);
-            let possible_answer_1 = unsolved_wip[0] + unsolved_wip[1];
-            let possible_answer_2 = unsolved_wip[0] * unsolved_wip[1];
-            if unsolved_wip.len() == 2 {
-                if possible_answer_1 == equation.0 || possible_answer_2 == equation.0 {
-                    sum += equation.0;
+    for (answer, equation) in equations {
+        let mut eqs = vec![equation];
+        while let Some(unsolved_eq) = eqs.pop() {
+            let possible_answer_1 = unsolved_eq[0] + unsolved_eq[1];
+            let possible_answer_2 = unsolved_eq[0] * unsolved_eq[1];
+            if unsolved_eq.len() == 2 { // len 2 means these are our only possible answers for this eq
+                if possible_answer_1 == answer || possible_answer_2 == answer {
+                    sum += answer;
                     break;
+                } else {
+                    continue;
                 }
             } else {
-                let mut new_wip_1 = vec![possible_answer_1];
-                new_wip_1.extend_from_slice(&unsolved_wip[2..]);
-                wips.push(new_wip_1);
+                let mut new_eq_1 = vec![possible_answer_1];
+                new_eq_1.extend_from_slice(&unsolved_eq[2..]);
+                eqs.push(new_eq_1);
 
-                let mut new_wip_2 = vec![possible_answer_2];
-                new_wip_2.extend_from_slice(&unsolved_wip[2..]);
-                wips.push(new_wip_2);
+                let mut new_eq_2 = vec![possible_answer_2];
+                new_eq_2.extend_from_slice(&unsolved_eq[2..]);
+                eqs.push(new_eq_2);
             }
         }
     }
@@ -58,39 +50,40 @@ pub fn part_two(input: &str) -> Option<u64> {
     let equations = parse_input(input);
 
     let mut sum = 0;
-    for equation in equations {
-        let mut wips = vec![equation.1];
-        while has_unsolved_wip(&wips) {
-            let unsolved_wip = get_and_remove_first_unsolved_wip(&mut wips);
-            let possible_answer_1 = unsolved_wip[0] + unsolved_wip[1];
-            let possible_answer_2 = unsolved_wip[0] * unsolved_wip[1];
-            let possible_answer_3 = format!("{}{}", unsolved_wip[0], unsolved_wip[1])
+    for (answer, equation) in equations {
+        let mut eqs = vec![equation];
+        while let Some(unsolved_eq) = eqs.pop() {
+            let possible_answer_1 = unsolved_eq[0] + unsolved_eq[1];
+            let possible_answer_2 = unsolved_eq[0] * unsolved_eq[1];
+            let possible_answer_3 = format!("{}{}", unsolved_eq[0], unsolved_eq[1])
                 .parse::<u64>()
                 .ok();
-            if unsolved_wip.len() == 2 {
-                if possible_answer_1 == equation.0
-                    || possible_answer_2 == equation.0
-                    || possible_answer_3.map_or(false, |p3| p3 == equation.0)
+            if unsolved_eq.len() == 2 {
+                if possible_answer_1 == answer
+                    || possible_answer_2 == answer
+                    || possible_answer_3.map_or(false, |p3| p3 == answer)
                 {
-                    sum += equation.0;
+                    sum += answer;
                     break;
+                } else {
+                    continue;
                 }
             } else {
-                if possible_answer_1 <= equation.0 {
-                    let mut new_wip_1 = vec![possible_answer_1];
-                    new_wip_1.extend_from_slice(&unsolved_wip[2..]);
-                    wips.push(new_wip_1);
+                if possible_answer_1 <= answer {
+                    let mut new_eq_1 = vec![possible_answer_1];
+                    new_eq_1.extend_from_slice(&unsolved_eq[2..]);
+                    eqs.push(new_eq_1);
                 }
-                if possible_answer_2 <= equation.0 {
-                    let mut new_wip_2 = vec![possible_answer_2];
-                    new_wip_2.extend_from_slice(&unsolved_wip[2..]);
-                    wips.push(new_wip_2);
+                if possible_answer_2 <= answer {
+                    let mut new_eq_2 = vec![possible_answer_2];
+                    new_eq_2.extend_from_slice(&unsolved_eq[2..]);
+                    eqs.push(new_eq_2);
                 }
-                if possible_answer_3.map_or(false, |p3| p3 <= equation.0) {
+                if possible_answer_3.map_or(false, |p3| p3 <= answer) {
                     if let Some(p3) = possible_answer_3 {
-                        let mut new_wip_3 = vec![p3];
-                        new_wip_3.extend_from_slice(&unsolved_wip[2..]);
-                        wips.push(new_wip_3);
+                        let mut new_eq_3 = vec![p3];
+                        new_eq_3.extend_from_slice(&unsolved_eq[2..]);
+                        eqs.push(new_eq_3);
                     }
                 }
             }
