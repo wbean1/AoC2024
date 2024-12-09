@@ -11,7 +11,7 @@ pub fn part_one(input: &str) -> Option<u64> {
 pub fn part_two(input: &str) -> Option<u64> {
     let original = parse_input(input);
     let id_vector = convert_to_ids(&original);
-    let compacted_vector = compact_part2(&id_vector);
+    let compacted_vector = compact_part2(&id_vector, id_vector.len());
     let checksum = checksum(&compacted_vector);
     Some(checksum)
 }
@@ -57,8 +57,55 @@ fn compact(input: &Vec<i32>) -> Vec<i32> {
     return compact(&new_vec);
 }
 
-fn compact_part2(input: &Vec<i32>) -> Vec<i32> {
-    input.clone()
+fn compact_part2(input: &Vec<i32>, position: usize) -> Vec<i32> {
+    let mut new_vec = input.clone();
+    let (origin_pos, len) = find_rightmost_id(&input, position);
+    let destination_pos = find_leftmost_empty_space_of_len(&input, len);
+    if destination_pos < origin_pos {
+        for i in 0..len {
+            new_vec.swap(origin_pos + i, destination_pos + i);
+        }
+    }
+    if origin_pos < 10 {
+        return new_vec;
+    }
+    return compact_part2(&new_vec, origin_pos);
+}
+
+fn find_rightmost_id(input: &Vec<i32>, position: usize) -> (usize, usize) {
+    let mut id = -1;
+    let mut ending_pos = 0;
+    let mut starting_pos = 0;
+    for (i, &val) in input[..position].iter().enumerate().rev() {
+        if val != -1 {
+            id = val;
+            ending_pos = i;
+            break;
+        }
+    }
+    for (i, &val) in input[..position].iter().enumerate() {
+        if val == id {
+            starting_pos = i;
+            break;
+        }
+    }
+
+    (starting_pos, ending_pos - starting_pos + 1)
+}
+
+fn find_leftmost_empty_space_of_len(input: &Vec<i32>, len: usize) -> usize {
+    let mut count = 0;
+    for (i, &val) in input.iter().enumerate() {
+        if val == -1 {
+            count += 1;
+            if count == len {
+                return i - len + 1;
+            }
+        } else {
+            count = 0;
+        }
+    }
+    input.len()
 }
 
 fn left_most_empty(input: &Vec<i32>) -> usize {
@@ -83,7 +130,7 @@ fn checksum(input: &Vec<i32>) -> u64 {
     let mut sum = 0;
     for (i, &val) in input.iter().enumerate() {
         if val == -1 {
-            return sum;
+            continue;
         } else {
             sum += i as u64 * val as u64;
         }
@@ -95,6 +142,27 @@ fn checksum(input: &Vec<i32>) -> u64 {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_find_rightmost_id() {
+        let vec = vec![-1,-1,-1,-1,3,3,3,-1,-1,4,4,-1];
+        let result = find_rightmost_id(&vec, 7);
+        assert_eq!(result, (4, 3));
+    }
+
+    #[test]
+    fn test_find_rightmost_id_2() {
+        let vec = vec![-1,-1,-1,-1,3,3,3,-1,-1,4,4,-1];
+        let result = find_rightmost_id(&vec, vec.len() - 1);
+        assert_eq!(result, (9, 2));
+    }
+
+    #[test]
+    fn test_find_leftmost_empty_space_of_len() {
+        let vec = vec![0,1,2,3,4,5,-1,-1,6,7,8,-1,-1,-1,9,10];
+        let result = find_leftmost_empty_space_of_len(&vec, 3);
+        assert_eq!(result, 11)
+    }
 
     #[test]
     fn test_part_one() {
