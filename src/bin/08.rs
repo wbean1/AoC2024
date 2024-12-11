@@ -56,7 +56,11 @@ fn get_coords_for_char(map: &Vec<Vec<char>>, c: &char) -> Vec<(usize, usize)> {
     coords
 }
 
-fn locate_antinodes(coords: &Vec<(usize, usize)>, x_bound: usize, y_bound: usize) -> Vec<(usize, usize)> {
+fn locate_antinodes(
+    coords: &Vec<(usize, usize)>,
+    x_bound: usize,
+    y_bound: usize,
+) -> Vec<(usize, usize)> {
     let mut antinodes = Vec::new();
 
     // Need at least 2 coordinates to form a line
@@ -80,14 +84,8 @@ fn locate_antinodes(coords: &Vec<(usize, usize)>, x_bound: usize, y_bound: usize
             // Check both possible antinode positions
             // One in each direction from the second point
             let potential_antinodes = [
-                (
-                    (x2 as i32 + dx) as usize,
-                    (y2 as i32 + dy) as usize
-                ),
-                (
-                    (x1 as i32 - dx) as usize,
-                    (y1 as i32 - dy) as usize
-                )
+                ((x2 as i32 + dx) as usize, (y2 as i32 + dy) as usize),
+                ((x1 as i32 - dx) as usize, (y1 as i32 - dy) as usize),
             ];
 
             for antinode in potential_antinodes {
@@ -102,7 +100,11 @@ fn locate_antinodes(coords: &Vec<(usize, usize)>, x_bound: usize, y_bound: usize
     antinodes
 }
 
-fn locate_antinodes_part2(coords: &Vec<(usize, usize)>, x_bound: usize, y_bound: usize) -> Vec<(usize, usize)> {
+fn locate_antinodes_part2(
+    coords: &Vec<(usize, usize)>,
+    x_bound: usize,
+    y_bound: usize,
+) -> Vec<(usize, usize)> {
     let mut antinodes = Vec::new();
 
     // Need at least 2 coordinates to form a line
@@ -122,10 +124,10 @@ fn locate_antinodes_part2(coords: &Vec<(usize, usize)>, x_bound: usize, y_bound:
 
             // Check both directions from both points
             // Try multiple steps (multipliers) in each direction
-            for multiplier in x_bound as i32*-1..x_bound as i32 {
+            for multiplier in x_bound as i32 * -1..x_bound as i32 {
                 let potential_antinode = (
                     (x2 as i32 + dx * multiplier) as usize,
-                    (y2 as i32 + dy * multiplier) as usize
+                    (y2 as i32 + dy * multiplier) as usize,
                 );
 
                 // Only include if the coordinates are valid
@@ -136,7 +138,7 @@ fn locate_antinodes_part2(coords: &Vec<(usize, usize)>, x_bound: usize, y_bound:
                 // Also check from the first point
                 let potential_antinode = (
                     (x1 as i32 - dx * multiplier) as usize,
-                    (y1 as i32 - dy * multiplier) as usize
+                    (y1 as i32 - dy * multiplier) as usize,
                 );
 
                 if potential_antinode.0 <= x_bound && potential_antinode.1 <= y_bound {

@@ -138,28 +138,27 @@ fn checksum(input: &Vec<i32>) -> u64 {
     sum
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
     fn test_find_rightmost_id() {
-        let vec = vec![-1,-1,-1,-1,3,3,3,-1,-1,4,4,-1];
+        let vec = vec![-1, -1, -1, -1, 3, 3, 3, -1, -1, 4, 4, -1];
         let result = find_rightmost_id(&vec, 7);
         assert_eq!(result, (4, 3));
     }
 
     #[test]
     fn test_find_rightmost_id_2() {
-        let vec = vec![-1,-1,-1,-1,3,3,3,-1,-1,4,4,-1];
+        let vec = vec![-1, -1, -1, -1, 3, 3, 3, -1, -1, 4, 4, -1];
         let result = find_rightmost_id(&vec, vec.len() - 1);
         assert_eq!(result, (9, 2));
     }
 
     #[test]
     fn test_find_leftmost_empty_space_of_len() {
-        let vec = vec![0,1,2,3,4,5,-1,-1,6,7,8,-1,-1,-1,9,10];
+        let vec = vec![0, 1, 2, 3, 4, 5, -1, -1, 6, 7, 8, -1, -1, -1, 9, 10];
         let result = find_leftmost_empty_space_of_len(&vec, 3);
         assert_eq!(result, 11)
     }

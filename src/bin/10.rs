@@ -6,9 +6,11 @@ fn parse_input(input: &str) -> Vec<Vec<u8>> {
     input
         .trim()
         .lines()
-        .map(|line| line.chars()
-            .filter_map(|c| c.to_digit(10).map(|d| d as u8))
-            .collect())
+        .map(|line| {
+            line.chars()
+                .filter_map(|c| c.to_digit(10).map(|d| d as u8))
+                .collect()
+        })
         .collect()
 }
 
@@ -125,7 +127,6 @@ fn rate_trailhead(map: &Vec<Vec<u8>>, trailhead: (usize, usize)) -> u32 {
 fn node_count(paths: &HashSet<Vec<(usize, usize)>>) -> usize {
     paths.iter().map(|path| path.len()).sum()
 }
-
 
 #[cfg(test)]
 mod tests {
