@@ -239,12 +239,7 @@ pub fn part_one(input: &str) -> Option<u32> {
     let map = parse_input(input);
     let regions = find_contiguous_regions(&map);
 
-    Some(
-        regions
-            .iter()
-            .map(|region| calculate_price(region))
-            .sum(),
-    )
+    Some(regions.iter().map(calculate_price).sum())
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
@@ -254,7 +249,7 @@ pub fn part_two(input: &str) -> Option<u32> {
     Some(
         regions
             .iter()
-            .map(|region| calculate_price_part2(region))
+            .map(calculate_price_part2)
             .sum(),
     )
 }
