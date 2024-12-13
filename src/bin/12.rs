@@ -21,9 +21,8 @@ fn find_contiguous_regions(map: &[Vec<char>]) -> Vec<HashSet<(usize, usize)>> {
                 .insert((row_idx, col_idx));
         }
     }
-    // then, split each into contiguous regions
-    
 
+    // then, split each into contiguous regions
     regions
         .into_values()
         .flat_map(|region| contiguous_regions(&region))
@@ -41,6 +40,7 @@ fn contiguous_regions(region: &HashSet<(usize, usize)>) -> Vec<HashSet<(usize, u
         sub_regions.push(sub_region.clone());
         visited.extend(sub_region);
     }
+
     sub_regions
 }
 
@@ -48,18 +48,17 @@ fn calculate_price(region: &HashSet<(usize, usize)>) -> u32 {
     let area = region.len() as u32;
     let mut perimeter = 4 * area;
     for &(row_idx, col_idx) in region {
-        if row_idx > 0 && region.contains(&(row_idx - 1, col_idx)) {
-            perimeter -= 1;
-        }
-        if region.contains(&(row_idx + 1, col_idx)) {
-            perimeter -= 1;
-        }
-        if col_idx > 0 && region.contains(&(row_idx, col_idx - 1)) {
-            perimeter -= 1;
-        }
-        if region.contains(&(row_idx, col_idx + 1)) {
-            perimeter -= 1;
-        }
+        let neighbors = [
+            (row_idx.wrapping_sub(1), col_idx),
+            (row_idx + 1, col_idx),
+            (row_idx, col_idx.wrapping_sub(1)),
+            (row_idx, col_idx + 1),
+        ];
+
+        perimeter -= neighbors
+            .iter()
+            .filter(|&&pos| region.contains(&pos))
+            .count() as u32;
     }
 
     area * perimeter
@@ -76,14 +75,14 @@ fn calculate_price_part2(region: &HashSet<(usize, usize)>) -> u32 {
 fn count_corners(region: &HashSet<(usize, usize)>) -> u32 {
     let mut corners_count = 0;
     for &(row_idx, col_idx) in region {
-        let n = row_idx > 0 && region.contains(&(row_idx - 1, col_idx));
+        let n = region.contains(&(row_idx.wrapping_sub(1), col_idx));
         let e = region.contains(&(row_idx, col_idx + 1));
         let s = region.contains(&(row_idx + 1, col_idx));
-        let w = col_idx > 0 && region.contains(&(row_idx, col_idx - 1));
-        let ne = row_idx > 0 && region.contains(&(row_idx - 1, col_idx + 1));
+        let w = region.contains(&(row_idx, col_idx.wrapping_sub(1)));
+        let ne = region.contains(&(row_idx.wrapping_sub(1), col_idx + 1));
         let se = region.contains(&(row_idx + 1, col_idx + 1));
-        let sw = col_idx > 0 && region.contains(&(row_idx + 1, col_idx - 1));
-        let nw = row_idx > 0 && col_idx > 0 && region.contains(&(row_idx - 1, col_idx - 1));
+        let sw = region.contains(&(row_idx + 1, col_idx.wrapping_sub(1)));
+        let nw = region.contains(&(row_idx.wrapping_sub(1), col_idx.wrapping_sub(1)));
         // ways it can be 4 convex corners
         if !n && !e && !s && !w {
             corners_count += 4;
@@ -239,23 +238,25 @@ fn bfs(region: &HashSet<(usize, usize)>, start: (usize, usize)) -> HashSet<(usiz
 pub fn part_one(input: &str) -> Option<u32> {
     let map = parse_input(input);
     let regions = find_contiguous_regions(&map);
-    let mut total_price = 0;
-    for region in regions {
-        let price = calculate_price(&region);
-        total_price += price;
-    }
-    Some(total_price)
+
+    Some(
+        regions
+            .iter()
+            .map(|region| calculate_price(region))
+            .sum(),
+    )
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
     let map = parse_input(input);
     let regions = find_contiguous_regions(&map);
-    let mut total_price = 0;
-    for region in regions {
-        let price = calculate_price_part2(&region);
-        total_price += price;
-    }
-    Some(total_price)
+
+    Some(
+        regions
+            .iter()
+            .map(|region| calculate_price_part2(region))
+            .sum(),
+    )
 }
 
 #[cfg(test)]
