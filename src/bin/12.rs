@@ -10,7 +10,8 @@ fn parse_input(input: &str) -> Vec<Vec<char>> {
         .collect()
 }
 
-fn find_regions(map: &Vec<Vec<char>>) -> HashMap<char, HashSet<(usize, usize)>> {
+fn find_contiguous_regions(map: &[Vec<char>]) -> Vec<HashSet<(usize, usize)>> {
+    // first, split the map by character
     let mut regions = HashMap::new();
     for (row_idx, row) in map.iter().enumerate() {
         for (col_idx, &ch) in row.iter().enumerate() {
@@ -20,7 +21,13 @@ fn find_regions(map: &Vec<Vec<char>>) -> HashMap<char, HashSet<(usize, usize)>> 
                 .insert((row_idx, col_idx));
         }
     }
+    // then, split each into contiguous regions
+    
+
     regions
+        .into_values()
+        .flat_map(|region| contiguous_regions(&region))
+        .collect()
 }
 
 fn contiguous_regions(region: &HashSet<(usize, usize)>) -> Vec<HashSet<(usize, usize)>> {
@@ -38,49 +45,32 @@ fn contiguous_regions(region: &HashSet<(usize, usize)>) -> Vec<HashSet<(usize, u
 }
 
 fn calculate_price(region: &HashSet<(usize, usize)>) -> u32 {
-    let sub_regions = contiguous_regions(region);
-
-    let mut total_price = 0;
-    // now we can calculate the price for each sub-region
-    for sub_region in sub_regions {
-        let area = sub_region.len() as u32;
-        let mut perimeter = 4 * area;
-        for &(row_idx, col_idx) in &sub_region {
-            if row_idx > 0 && sub_region.contains(&(row_idx - 1, col_idx)) {
-                perimeter -= 1;
-            }
-            if sub_region.contains(&(row_idx + 1, col_idx)) {
-                perimeter -= 1;
-            }
-            if col_idx > 0 && sub_region.contains(&(row_idx, col_idx - 1)) {
-                perimeter -= 1;
-            }
-            if sub_region.contains(&(row_idx, col_idx + 1)) {
-                perimeter -= 1;
-            }
+    let area = region.len() as u32;
+    let mut perimeter = 4 * area;
+    for &(row_idx, col_idx) in region {
+        if row_idx > 0 && region.contains(&(row_idx - 1, col_idx)) {
+            perimeter -= 1;
         }
-        let price = area * perimeter;
-        total_price += price;
+        if region.contains(&(row_idx + 1, col_idx)) {
+            perimeter -= 1;
+        }
+        if col_idx > 0 && region.contains(&(row_idx, col_idx - 1)) {
+            perimeter -= 1;
+        }
+        if region.contains(&(row_idx, col_idx + 1)) {
+            perimeter -= 1;
+        }
     }
 
-    total_price
+    area * perimeter
 }
 
 fn calculate_price_part2(region: &HashSet<(usize, usize)>) -> u32 {
-    // first, we need to split the region into its connected components
-    let sub_regions = contiguous_regions(region);
+    let area = region.len() as u32;
+    // count the corners of the sub-region to get number of edges
+    let corners_count = count_corners(region);
 
-    let mut total_price = 0;
-    for sub_region in sub_regions {
-        let area = sub_region.len() as u32;
-        // count the corners of the sub-region to get number of edges
-        let corners_count = count_corners(&sub_region);
-
-        let price = area * corners_count;
-        total_price += price;
-    }
-
-    total_price
+    area * corners_count
 }
 
 fn count_corners(region: &HashSet<(usize, usize)>) -> u32 {
@@ -248,10 +238,10 @@ fn bfs(region: &HashSet<(usize, usize)>, start: (usize, usize)) -> HashSet<(usiz
 
 pub fn part_one(input: &str) -> Option<u32> {
     let map = parse_input(input);
-    let regions = find_regions(&map);
+    let regions = find_contiguous_regions(&map);
     let mut total_price = 0;
-    for (_, value) in regions {
-        let price = calculate_price(&value);
+    for region in regions {
+        let price = calculate_price(&region);
         total_price += price;
     }
     Some(total_price)
@@ -259,10 +249,10 @@ pub fn part_one(input: &str) -> Option<u32> {
 
 pub fn part_two(input: &str) -> Option<u32> {
     let map = parse_input(input);
-    let regions = find_regions(&map);
+    let regions = find_contiguous_regions(&map);
     let mut total_price = 0;
-    for (_, value) in regions {
-        let price = calculate_price_part2(&value);
+    for region in regions {
+        let price = calculate_price_part2(&region);
         total_price += price;
     }
     Some(total_price)

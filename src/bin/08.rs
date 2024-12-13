@@ -44,7 +44,7 @@ fn parse_input(input: &str) -> Vec<Vec<char>> {
         .collect()
 }
 
-fn get_coords_for_char(map: &Vec<Vec<char>>, c: &char) -> Vec<(usize, usize)> {
+fn get_coords_for_char(map: &[Vec<char>], c: &char) -> Vec<(usize, usize)> {
     let mut coords = Vec::new();
     for (row_idx, row) in map.iter().enumerate() {
         for (col_idx, &ch) in row.iter().enumerate() {
@@ -124,7 +124,7 @@ fn locate_antinodes_part2(
 
             // Check both directions from both points
             // Try multiple steps (multipliers) in each direction
-            for multiplier in x_bound as i32 * -1..x_bound as i32 {
+            for multiplier in -(x_bound as i32)..x_bound as i32 {
                 let potential_antinode = (
                     (x2 as i32 + dx * multiplier) as usize,
                     (y2 as i32 + dy * multiplier) as usize,

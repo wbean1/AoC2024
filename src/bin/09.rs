@@ -47,20 +47,20 @@ fn convert_to_ids(input: &Vec<u8>) -> Vec<i32> {
 
 fn compact(input: &Vec<i32>) -> Vec<i32> {
     let mut new_vec = input.clone();
-    let left_most_empty = left_most_empty(&input);
-    let right_most_non_empty = right_most_non_empty(&input);
+    let left_most_empty = left_most_empty(input);
+    let right_most_non_empty = right_most_non_empty(input);
     if left_most_empty < right_most_non_empty {
         new_vec.swap(left_most_empty, right_most_non_empty);
     } else {
         return new_vec;
     }
-    return compact(&new_vec);
+    compact(&new_vec)
 }
 
 fn compact_part2(input: &Vec<i32>, position: usize) -> Vec<i32> {
     let mut new_vec = input.clone();
-    let (origin_pos, len) = find_rightmost_id(&input, position);
-    let destination_pos = find_leftmost_empty_space_of_len(&input, len);
+    let (origin_pos, len) = find_rightmost_id(input, position);
+    let destination_pos = find_leftmost_empty_space_of_len(input, len);
     if destination_pos < origin_pos {
         for i in 0..len {
             new_vec.swap(origin_pos + i, destination_pos + i);
@@ -69,10 +69,10 @@ fn compact_part2(input: &Vec<i32>, position: usize) -> Vec<i32> {
     if origin_pos < 10 {
         return new_vec;
     }
-    return compact_part2(&new_vec, origin_pos);
+    compact_part2(&new_vec, origin_pos)
 }
 
-fn find_rightmost_id(input: &Vec<i32>, position: usize) -> (usize, usize) {
+fn find_rightmost_id(input: &[i32], position: usize) -> (usize, usize) {
     let mut id = -1;
     let mut ending_pos = 0;
     let mut starting_pos = 0;
@@ -117,7 +117,7 @@ fn left_most_empty(input: &Vec<i32>) -> usize {
     input.len()
 }
 
-fn right_most_non_empty(input: &Vec<i32>) -> usize {
+fn right_most_non_empty(input: &[i32]) -> usize {
     for (i, &val) in input.iter().enumerate().rev() {
         if val != -1 {
             return i;
@@ -126,7 +126,7 @@ fn right_most_non_empty(input: &Vec<i32>) -> usize {
     0
 }
 
-fn checksum(input: &Vec<i32>) -> u64 {
+fn checksum(input: &[i32]) -> u64 {
     let mut sum = 0;
     for (i, &val) in input.iter().enumerate() {
         if val == -1 {

@@ -34,7 +34,7 @@ pub fn part_two(input: &str) -> Option<u32> {
     Some(sum)
 }
 
-fn find_trailheads(map: &Vec<Vec<u8>>) -> Vec<(usize, usize)> {
+fn find_trailheads(map: &[Vec<u8>]) -> Vec<(usize, usize)> {
     let mut trailheads = Vec::new();
     for (row_idx, row) in map.iter().enumerate() {
         for (col_idx, &val) in row.iter().enumerate() {
