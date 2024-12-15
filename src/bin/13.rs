@@ -2,9 +2,9 @@ advent_of_code::solution!(13);
 
 #[derive(Debug)]
 struct Machine {
-    a: (i64, i64),
-    b: (i64, i64),
-    prize: (i64, i64),
+    a: (u64, u64),
+    b: (u64, u64),
+    prize: (u64, u64),
 }
 
 impl Machine {
@@ -15,32 +15,38 @@ impl Machine {
             self.prize,
         );
 
-        let intersection = (round(intersection.0, 3), round(intersection.1, 3));
-        if intersection.0.fract() > 0.001
-            || intersection.1.fract() > 0.001
-            || intersection.0 < 0.0
-            || intersection.1 < 0.0
-        {
-            return None;
+        if intersection.is_none() {
+            None
+        } else {
+            let (x, _y) = intersection.unwrap();
+            let a_cost = (x.round() as u64 / self.a.0) * 3;
+            let b_cost = (self.prize.0 - x.round() as u64) / self.b.0;
+            Some(a_cost + b_cost)
         }
-
-        let a_cost = (intersection.0 as i64 / self.a.0) as u64 * 3;
-        let b_cost = ((self.prize.0 - intersection.0 as i64) / self.b.0) as u64;
-
-        Some(a_cost + b_cost)
     }
 }
 
-fn round(x: f64, decimals: u32) -> f64 {
-    let y = 10i64.pow(decimals) as f64;
-    (x * y).round() / y
-}
-
-fn get_intersection(slope_a: f64, slope_b: f64, prize: (i64, i64)) -> (f64, f64) {
+fn get_intersection(slope_a: f64, slope_b: f64, prize: (u64, u64)) -> Option<(f64, f64)> {
     let x = (-slope_b * prize.0 as f64 + prize.1 as f64) / (slope_a - slope_b);
     let y = slope_a * x;
 
-    (x, y)
+    // check if the intersection is valid for the machine, that is:
+    // 1. the intersection is not negative
+    if x < -0.01 || y < -0.01 {
+        return None;
+    }
+
+    // 2. the intersection is not greater than the prize
+    if x.round() as u64 > prize.0 {
+        return None;
+    }
+
+    // 3. the intersection occurs on (or within floating point precision) of whole numbers
+    if (x.fract() > 0.001 && x.fract() < 0.999) || (y.fract() > 0.001 && y.fract() < 0.999) {
+        return None;
+    }
+
+    Some((x, y))
 }
 
 fn parse_machines(input: &str) -> Vec<Machine> {
@@ -112,5 +118,11 @@ mod tests {
     fn test_part_one() {
         let result = part_one(&advent_of_code::template::read_file("examples", DAY));
         assert_eq!(result, Some(480));
+    }
+
+    #[test]
+    fn test_part_two() {
+        let result = part_two(&advent_of_code::template::read_file("examples", DAY));
+        assert_eq!(result, Some(875318608908));
     }
 }
